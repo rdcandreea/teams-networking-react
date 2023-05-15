@@ -1,4 +1,5 @@
 import "./style.css";
+import React from "react";
 
 type Team = {
   id: string;
@@ -124,35 +125,55 @@ export function TeamsTable(props: Props) {
   );
 }
 
-export function TeamsTableWrapper() {
-  const teams = [
-    {
-      id: "toze8j1610313009673",
-      promotion: "html",
-      members: "Nicolae Matei, HTML",
-      name: "Web Presentation",
-      url: "https://github.com/nmatei/web-intro-presentation",
-    },
-    {
-      id: "ezabnf1630345987541",
-      promotion: "css",
-      members: "Nicolae",
-      name: "Names",
-      url: "https://github.com/nmatei/nmatei.github.io",
-    },
-  ];
-  // return TeamsTable({
-  //   teams: teams,
-  // });
-  return (
-    <>
-      <TeamsTable teams={[]} loading={true}></TeamsTable>
-      <hr />
-      <TeamsTable teams={[]} loading={false}></TeamsTable>
-      <hr />
-      <TeamsTable teams={teams} loading={true}></TeamsTable>
-      <hr />
-      <TeamsTable teams={teams} loading={false}></TeamsTable>
-    </>
-  );
+type WrapperProps = {};
+type State = {
+  loading: boolean;
+  teams: Team[];
+};
+export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
+  constructor(props: WrapperProps) {
+    super(props);
+    console.warn("wrapper props", props);
+    this.state = {
+      loading: true,
+      teams: [],
+    };
+  }
+
+  componentDidMount(): void {
+    console.info("mount");
+    setTimeout(() => {
+      console.info("change loading");
+      // this.state.loading = false;
+      this.setState({
+        loading: false,
+        teams: [
+          {
+            id: "toze8j1610313009673",
+            promotion: "html",
+            members: "Nicolae Matei, HTML",
+            name: "Web Presentation",
+            url: "https://github.com/nmatei/web-intro-presentation",
+          },
+          {
+            id: "ezabnf1630345987541",
+            promotion: "css",
+            members: "Nicolae",
+            name: "Names",
+            url: "https://github.com/nmatei/nmatei.github.io",
+          },
+        ],
+      });
+    }, 5000);
+  }
+
+  render() {
+    console.warn("render");
+    return (
+      <TeamsTable
+        teams={this.state.teams}
+        loading={this.state.loading}
+      ></TeamsTable>
+    );
+  }
 }
