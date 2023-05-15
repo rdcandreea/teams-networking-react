@@ -1,4 +1,4 @@
-function getConf() {
+export function getConf() {
   return {
     name: "my conf",
     x: 123,
