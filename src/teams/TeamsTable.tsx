@@ -1,3 +1,4 @@
+import { getTeamsRequest } from "./middlewear";
 import "./style.css";
 import React from "react";
 
@@ -16,6 +17,13 @@ type Props = {
 
 export function TeamsTable(props: Props) {
   console.warn("props", props);
+  // if (props.loading) {
+  //   return (
+  //     <div style={{ minHeight: "100px" }} className="loading-mask">
+  //       Loading...please wait
+  //     </div>
+  //   );
+  // }
   return (
     <form
       id="editForm"
@@ -140,31 +148,14 @@ export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
     };
   }
 
-  componentDidMount(): void {
+  async componentDidMount(): Promise<void> {
     console.info("mount");
-    setTimeout(() => {
-      console.info("change loading");
-      // this.state.loading = false;
-      this.setState({
-        loading: false,
-        teams: [
-          {
-            id: "toze8j1610313009673",
-            promotion: "html",
-            members: "Nicolae Matei, HTML",
-            name: "Web Presentation",
-            url: "https://github.com/nmatei/web-intro-presentation",
-          },
-          {
-            id: "ezabnf1630345987541",
-            promotion: "css",
-            members: "Nicolae",
-            name: "Names",
-            url: "https://github.com/nmatei/nmatei.github.io",
-          },
-        ],
-      });
-    }, 5000);
+    const teams = await getTeamsRequest();
+    console.info("change loading", teams);
+    this.setState({
+      loading: false,
+      teams: teams,
+    });
   }
 
   render() {
