@@ -13,11 +13,14 @@ type Team = {
 type Props = {
   loading: boolean;
   teams: Team[];
+  team: Team;
 };
 
 type Actions = {
   // deleteTeam: (id: string) => void; //we can also define deleteTeamRequest function like this
   deleteTeam(id: string): void;
+  save(): void;
+  inputChanged(name: string, value: string): void;
 };
 
 export function TeamsTable(props: Props & Actions) {
@@ -35,6 +38,10 @@ export function TeamsTable(props: Props & Actions) {
       action=""
       method="post"
       className={props.loading ? "loading-mask" : ""}
+      onSubmit={(e) => {
+        e.preventDefault();
+        props.save();
+      }}
     >
       <table>
         <colgroup>
@@ -98,36 +105,48 @@ export function TeamsTable(props: Props & Actions) {
               <input
                 type="text"
                 name="promotion"
-                id="promotion"
                 placeholder={"Enter Promotion"}
                 required
+                value={props.team.promotion}
+                onChange={(e) => {
+                  props.inputChanged("promotion changed", e.target.value);
+                }}
               />
             </td>
             <td>
               <input
                 type="text"
                 name="members"
-                id="members"
                 placeholder={"Enter members"}
                 required
+                value={props.team.members}
+                onChange={(e) => {
+                  console.warn("members changed", e.target.value);
+                }}
               />
             </td>
             <td>
               <input
                 type="text"
                 name="name"
-                id="name"
                 placeholder={"Enter project name"}
                 required
+                value={props.team.name}
+                onChange={(e) => {
+                  console.warn("project name changed", e.target.value);
+                }}
               />
             </td>
             <td>
               <input
                 type="text"
                 name="url"
-                id="url"
                 placeholder={"Enter URL"}
                 required
+                value={props.team.url}
+                onChange={(e) => {
+                  console.warn("url changed", e.target.value);
+                }}
               />
             </td>
             <td>
@@ -145,6 +164,7 @@ type WrapperProps = {};
 type State = {
   loading: boolean;
   teams: Team[];
+  team: Team;
 };
 export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
   constructor(props: WrapperProps) {
@@ -153,6 +173,13 @@ export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
     this.state = {
       loading: true,
       teams: [],
+      team: {
+        id: "",
+        name: "",
+        url: "",
+        promotion: "",
+        members: "",
+      },
     };
   }
 
@@ -171,16 +198,33 @@ export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
   }
 
   render() {
-    console.warn("render", this.props);
+    // console.warn("render", this.props);
     return (
       <TeamsTable
         teams={this.state.teams}
         loading={this.state.loading}
+        team={this.state.team}
         deleteTeam={async (teamId) => {
           console.warn("TODO please remove this", teamId);
           const status = await deleteTeamRequest(teamId);
           console.warn("status", status);
           this.loadTeams();
+        }}
+        save={() => {
+          const team = {};
+        }}
+        inputChanged={(name: string, value: string) => {
+          console.warn("%o changed to %o", name, value);
+          // this.state.team.promotion = "smth" //not ok
+          this.setState((state) => {
+            console.warn("state", state);
+            return {
+              team: {
+                ...state.team,
+                promotion: value,
+              },
+            };
+          });
         }}
       ></TeamsTable>
     );
