@@ -25,6 +25,8 @@ type Actions = {
   deleteTeam(id: string): void;
   save(): void;
   inputChanged(name: string, value: string): void;
+  startEdit(team: Team): void;
+  reset(): void;
 };
 
 export function TeamsTable(props: Props & Actions) {
@@ -45,6 +47,10 @@ export function TeamsTable(props: Props & Actions) {
       onSubmit={(e) => {
         e.preventDefault();
         props.save();
+      }}
+      onReset={(e) => {
+        e.preventDefault();
+        props.reset();
       }}
     >
       <table>
@@ -69,7 +75,8 @@ export function TeamsTable(props: Props & Actions) {
           </tr>
         </thead>
         <tbody>
-          {props.teams.map(({ id, url, promotion, members, name }) => {
+          {props.teams.map((team) => {
+            const { id, url, promotion, members, name } = team;
             let displayURL = url;
             if (url.startsWith("https://")) {
               displayURL = url.substring(8);
@@ -96,7 +103,14 @@ export function TeamsTable(props: Props & Actions) {
                   >
                     ✖
                   </a>
-                  <a className="link-btn">&#9998;</a>
+                  <a
+                    className="link-btn"
+                    onClick={() => {
+                      props.startEdit(team);
+                    }}
+                  >
+                    &#9998;
+                  </a>
                 </td>
               </tr>
             );
@@ -243,6 +257,14 @@ export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
               [name]: value,
             },
           }));
+        }}
+        startEdit={(team) => {
+          this.setState({ team });
+        }}
+        reset={async () => {
+          this.setState({
+            team: getEmptyTeam(),
+          });
         }}
       ></TeamsTable>
     );
