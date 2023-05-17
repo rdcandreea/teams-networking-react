@@ -1,4 +1,8 @@
-import { deleteTeamRequest, getTeamsRequest } from "./middlewear";
+import {
+  createTeamRequest,
+  deleteTeamRequest,
+  getTeamsRequest,
+} from "./middlewear";
 import "./style.css";
 import React from "react";
 
@@ -109,7 +113,7 @@ export function TeamsTable(props: Props & Actions) {
                 required
                 value={props.team.promotion}
                 onChange={(e) => {
-                  props.inputChanged("promotion changed", e.target.value);
+                  props.inputChanged("promotion", e.target.value);
                 }}
               />
             </td>
@@ -121,7 +125,7 @@ export function TeamsTable(props: Props & Actions) {
                 required
                 value={props.team.members}
                 onChange={(e) => {
-                  console.warn("members changed", e.target.value);
+                  props.inputChanged("members", e.target.value);
                 }}
               />
             </td>
@@ -133,7 +137,7 @@ export function TeamsTable(props: Props & Actions) {
                 required
                 value={props.team.name}
                 onChange={(e) => {
-                  console.warn("project name changed", e.target.value);
+                  props.inputChanged("name", e.target.value);
                 }}
               />
             </td>
@@ -145,7 +149,7 @@ export function TeamsTable(props: Props & Actions) {
                 required
                 value={props.team.url}
                 onChange={(e) => {
-                  console.warn("url changed", e.target.value);
+                  props.inputChanged("url", e.target.value);
                 }}
               />
             </td>
@@ -166,20 +170,31 @@ type State = {
   teams: Team[];
   team: Team;
 };
+
+const emptyTeam: Team = {
+  id: "",
+  name: "",
+  promotion: "",
+  url: "",
+  members: "",
+};
+
+function getEmptyTeam(): Team {
+  return {
+    id: "",
+    name: "",
+    promotion: "",
+    url: "",
+    members: "",
+  };
+}
 export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
   constructor(props: WrapperProps) {
     super(props);
-    console.warn("wrapper props", props);
     this.state = {
       loading: true,
       teams: [],
-      team: {
-        id: "",
-        name: "",
-        url: "",
-        promotion: "",
-        members: "",
-      },
+      team: getEmptyTeam(),
     };
   }
 
@@ -210,21 +225,24 @@ export class TeamsTableWrapper extends React.Component<WrapperProps, State> {
           console.warn("status", status);
           this.loadTeams();
         }}
-        save={() => {
-          const team = {};
+        save={async () => {
+          const team = this.state.team;
+          team.members = "NEW";
+          const status = await createTeamRequest(team);
+          await this.loadTeams();
+          this.setState({
+            team: getEmptyTeam(),
+          });
         }}
         inputChanged={(name: string, value: string) => {
           console.warn("%o changed to %o", name, value);
           // this.state.team.promotion = "smth" //not ok
-          this.setState((state) => {
-            console.warn("state", state);
-            return {
-              team: {
-                ...state.team,
-                promotion: value,
-              },
-            };
-          });
+          this.setState((state) => ({
+            team: {
+              ...state.team,
+              [name]: value,
+            },
+          }));
         }}
       ></TeamsTable>
     );
