@@ -19,7 +19,10 @@ export function createTeamRequest(team) {
   }).then((r) => r.json());
 }
 
-export function deleteTeamRequest(id, successDelete?) {
+export function deleteTeamRequest(
+  id: string,
+  successDelete?: (status: { success: boolean }) => void
+): Promise<{ success: boolean }> {
   return fetch("http://localhost:3000/teams-json/delete", {
     method: "DELETE",
     headers: {
