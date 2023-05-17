@@ -1,3 +1,5 @@
+import { Team } from "./models";
+
 export function getTeamsRequest() {
   return fetch("http://localhost:3000/teams-json", {
     method: "GET",
@@ -9,7 +11,7 @@ export function getTeamsRequest() {
   });
 }
 
-export function createTeamRequest(team) {
+export function createTeamRequest(team: Team) {
   return fetch("http://localhost:3000/teams-json/create", {
     method: "POST",
     headers: {

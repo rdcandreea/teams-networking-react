@@ -6,14 +6,7 @@ import {
 } from "./middlewear";
 import "./style.css";
 import React from "react";
-
-type Team = {
-  id: string;
-  name: string;
-  url: string;
-  promotion: string;
-  members: string;
-};
+import { Team } from "./models";
 
 type Props = {
   loading: boolean;
