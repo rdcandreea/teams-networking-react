@@ -1,6 +1,6 @@
 import { Team } from "./models";
 
-export function getTeamsRequest() {
+export function getTeamsRequest(): Promise<Team[]> {
   return fetch("http://localhost:3000/teams-json", {
     method: "GET",
     headers: {
